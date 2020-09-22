@@ -1,8 +1,16 @@
-name              'gnr_authorized_users'
-maintainer        'Gryphon & Rook Inc'
-license           'All rights reserved'
-description       'Configures authorized users'
-long_description  IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version           '0.1.0'
+#
+# Cookbook Name:: gnr_authorized_users
+# Recipe:: configure
+#
+# Copyright 2016, Gryphon & Rook Inc
+#
 
-depends           'ssh_authorized_keys', '= 0.4.0'
+users = data_bag_item('ssh', 'users')
+users.delete('id')
+
+users.each do |name, ssh_key|
+  ssh_authorize_key name do
+    key ssh_key['key']
+    user ssh_key['user']
+  end
+end
